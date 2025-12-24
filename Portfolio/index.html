@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Sahil Gupta's Portfolio</title>
+  <meta name="description" content="Portfolio of Sahil Gupta — software developer focused on AI/ML, backend APIs, and thoughtful UI.">
+  <style>
+    /* ---------- CSS VARIABLES / THEMES ---------- */
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f6f7f9;
+      --text: #0f1222;
+      --muted: #667085;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --accent: #5b7cff;
+      --accent-2: #8a5bff;
+      --shadow: 0 10px 30px rgba(2, 8, 23, 0.08);
+      --radius: 18px;
+      --maxw: 1080px;
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e16;
+      --bg-alt: #0f1422;
+      --text: #e5e7ef;
+      --muted: #a5acc4;
+      --card: #121828;
+      --border: #20283a;
+      --accent: #7aa2ff;
+      --accent-2: #a98bff;
+      --shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+
+    /* ---------- GLOBAL ---------- */
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+    /* ---------- NAVBAR ---------- */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(120%) blur(10px);
+      background: color-mix(in oklab, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .brand { font-weight: 800; letter-spacing: 0.3px; }
+    .nav a {
+      color: var(--text); text-decoration: none; font-weight: 600;
+    }
+    .nav-links { display: flex; gap: 18px; align-items: center; }
+    .nav-links a { opacity: 0.85; }
+    .nav-links a.active { color: var(--accent); opacity: 1; }
+    .icon-btn {
+      display: inline-grid; place-items: center;
+      width: 38px; height: 38px; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--card);
+      box-shadow: var(--shadow); cursor: pointer;
+    }
+
+    /* ---------- SCROLL PROGRESS ---------- */
+    .progress {
+      position: fixed; left: 0; top: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      z-index: 60;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      min-height: 78svh; display: grid; place-items: center; position: relative; overflow: clip;
+    }
+    .hero-bg {
+      position: absolute; inset: -10% -10% auto -10%;
+      height: 60svh;
+      background:
+        radial-gradient(50% 50% at 20% 20%, color-mix(in oklab, var(--accent) 25%, transparent) 0%, transparent 60%),
+        radial-gradient(60% 60% at 80% 30%, color-mix(in oklab, var(--accent-2) 25%, transparent) 0%, transparent 65%);
+      filter: blur(40px); opacity: 0.6; pointer-events: none; transform: translateY(var(--parallax,0px));
+      transition: transform 0.1s linear;
+    }
+    .hero-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 6px);
+      padding: clamp(22px, 3vw, 36px);
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 820px;
+      margin: 6svh 20px 10svh;
+      transform: translateY(0);
+      transition: transform 400ms cubic-bezier(.2,.8,.2,1);
+    }
+    .hero h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.05; margin: 0 0 10px; }
+    .hero p.lede { font-size: clamp(16px, 2.6vw, 20px); color: var(--muted); margin: 6px 0 14px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+      font-size: 13px; letter-spacing: .3px;
+    }
+    .cta {
+      display: inline-flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border); font-weight: 700;
+      background: var(--card); text-decoration: none; color: var(--text);
+      box-shadow: var(--shadow);
+    }
+    .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border: none; }
+    .btn:hover { transform: translateY(-1px); }
+
+    /* ---------- SECTIONS ---------- */
+    section { padding: 72px 0; }
+    .section-title { font-size: clamp(22px, 2.6vw, 28px); margin: 0 0 24px; }
+    .muted { color: var(--muted); }
+
+    /* ---------- ABOUT (video + caption) ---------- */
+    .about {
+      display: grid; gap: 28px;
+      grid-template-columns: 1.2fr 1fr;
+    }
+    @media (max-width: 900px) { .about { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+      padding: clamp(18px, 2.6vw, 24px);
+    }
+    .video-wrap { position: relative; border-radius: 16px; overflow: hidden; }
+    video { width: 100%; height: auto; display: block; }
+    .caption {
+      margin-top: 10px; font-size: 14px; color: var(--muted);
+      border-left: 3px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    /* ---------- SKILLS ---------- */
+    .chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      padding: 8px 12px; border: 1px solid var(--border); border-radius: 999px;
+      background: color-mix(in oklab, var(--card) 85%, transparent);
+      font-weight: 600; font-size: 14px;
+    }
+
+    /* ---------- PROJECTS (PDF modal) ---------- */
+    .grid {
+      display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr);
+    }
+    .col-6 { grid-column: span 6; } .col-4 { grid-column: span 4; } .col-12 { grid-column: span 12; }
+    @media (max-width: 900px) { .col-6, .col-4 { grid-column: span 12; } }
+
+    .project {
+      display: grid; gap: 12px;
+      grid-template-columns: 1fr;
+    }
+    .thumb {
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--bg-alt);
+      aspect-ratio: 16/9; display: grid; place-items: center; position: relative; cursor: pointer;
+    }
+    .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb .label {
+      position: absolute; left: 10px; bottom: 10px;
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px;
+    }
+
+    .project h3 { margin: 6px 0 4px; }
+    .project p { margin: 0; color: var(--muted); }
+
+    /* ---------- RESUME CALLOUT ---------- */
+    .resume-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .resume-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .resume-btn {
+      white-space: nowrap;
+    }
+
+    /* Mobile layout */
+    @media (max-width: 700px) {
+      .resume-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .resume-actions {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .resume-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    /* ---------- PORTFOLIO BUTTON ---------- */
+    .portfolio-btn {
+      background: linear-gradient(
+        135deg,
+        #1a73e8,   /* Google blue */
+        #34a853,   /* Google green */
+        #fbbc04    /* Google yellow */
+      );
+      color: #fff !important;
+      border: none;
+      box-shadow: 0 10px 24px rgba(26, 115, 232, 0.35);
+    }
+
+    .portfolio-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 14px 30px rgba(26, 115, 232, 0.45);
+    }
+
+    .portfolio-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    /* ---------- MODAL ---------- */
+    .modal {
+      position: fixed; inset: 0; background: color-mix(in oklab, #000 55%, transparent);
+      display: none; align-items: center; justify-content: center; padding: 20px; z-index: 80;
+    }
+    .modal.open { display: flex; }
+    .modal-card {
+      width: min(1100px, 98vw); height: min(80vh, 900px); background: var(--card);
+      border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+      display: grid; grid-template-rows: auto 1fr; overflow: hidden;
+    }
+    .modal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+    }
+    .modal-body { height: 100%; }
+    .modal iframe, .modal embed, .modal object { width: 100%; height: 100%; border: 0; display: block; background: var(--bg-alt); }
+
+    /* ---------- REVEAL ANIMATIONS ---------- */
+    .reveal { opacity: 0; transform: translateY(14px) scale(.98); }
+    .reveal.in {
+      opacity: 1; transform: none;
+      transition: opacity 600ms cubic-bezier(.2,.8,.2,1), transform 600ms cubic-bezier(.2,.8,.2,1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .hero-card, .reveal, .hero-bg { transition: none !important; transform: none !important; }
+    }
+
+    /* ---------- FOOTER ---------- */
+    footer { padding: 64px 0; color: var(--muted); }
+    .footer-grid { display: grid; gap: 18px; grid-template-columns: 1fr auto; align-items: center; }
+    @media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr; } }
+
+    /* Calendly container */
+    .calendly-btn {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white !important;
+      border: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .calendly-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 18px rgba(0,114,255,0.4);
+    }
+  </style>
+</head>
+<body>
+  <!-- Scroll progress -->
+  <div class="progress" id="progress"></div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#home" aria-label="Go to top">Sahil Gupta</a>
+      <div class="nav-links" role="navigation" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle color theme" title="Toggle dark/light">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="home" class="hero container">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-card reveal">
+      <span class="pill">Equity Research Analyst · Financial Modeller</span>
+      <h1>Hi, I'm Sahil</h1>
+      <p class="lede">I am a finance professional with hands-on experience in building in-depth equity research reports and robust financial models from scratch.</p>
+      <div class="cta">
+        <a class="btn primary" href="#projects">View Work</a>
+        <a class="btn" href="#contact">Contact Me</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">Profile</h2>
+      <div class="about">
+        <div class="card reveal">
+          <h3>Intro Video</h3>
+          <div class="video-wrap">
+            <!-- Replace src with your video. Optional <track> shows captions if you provide a VTT file. -->
+            <video controls preload="metadata" poster="" id="aboutVideo">
+              <source src="assets/video/intro.mp4" type="video/mp4">
+              <!-- Optional timed captions: create assets/video/intro.vtt -->
+              <!-- <track src="assets/video/intro.vtt" kind="captions" srclang="en" label="English"> -->
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <!-- Simple caption text under the video (always visible) -->
+          <p class="caption" id="videoCaption">
+            “I’m a developer specializing in API-driven systems and ML features. I enjoy turning ambiguous problems into clean, measurable outcomes.”
+          </p>
+          <div style="display:flex; gap:10px; flex-wrap: wrap; margin-top:10px;">
+            <button class="btn" id="muteToggle">Mute/Unmute</button>
+            <button class="btn" id="playToggle">Play/Pause</button>
+          </div>
+        </div>
+
+        <div class="card reveal">
+          <h3>About Me</h3>
+          <p>
+            Finance professional with hands-on experience in equity research, valuation, and financial modelling, having worked on company-level 
+and sector-level analysis. Skilled in business analysis, financial statement analysis, earnings concall notes, ratio and peer comparison, 
+and building end-to-end financial models including DCF and relative valuation. Actively create and share equity research content on X 
+(Twitter), analysing listed companies in depth and publishing insights on fundamental and technical analysis. 
+          </p>
+          <h4 style="margin-top:18px;">Currently</h4>
+          <ul>
+            <li>Building ML-backed recommendations and clean REST/Graph APIs.</li>
+            <li>Designing UIs that are fast, responsive, and delightful (even on low-end devices).</li>
+            <li>Shipping: Python · FastAPI · React/VanillaJS · SQL/NoSQL · Docker.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="container">
+      <h2 class="section-title">Skills</h2>
+      <div class="card reveal">
+        <div class="chips">
+          <span class="chip">Relative Valuation</span>
+          <span class="chip">DCF Models</span>
+          <span class="chip">Sector Analysis</span>
+          <span class="chip">Financial Modelling</span>
+          <span class="chip">Investment Analysis</span>
+          <span class="chip">Financial Analysis</span>
+          <span class="chip">Data Analysis</span>
+          <span class="chip">Forecasting</span>
+          <span class="chip">Technical Analysis</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="container">
+      <h2 class="section-title">Sample Financial Model & Reports</h2>
+      <div class="grid">
+        <!-- Project 1 -->
+        <div class="col-6 reveal">
+          <div class="project card">
+            <div class="thumb" data-pdf="assets/reports/EIMvaluationreport.pdf" role="button" tabindex="0" aria-label="Open PDF: EIM Valuation Report">
+              <img src="assets\images\Eicher_report.png" alt="EIM Valuation Report thumbnail" loading="lazy">
+              <span class="label">PDF · 21 pages</span>
+            </div>
+            <h3>EIM Valuation Report</h3>
+            <p>GenAI + RAG (LangChain, FAISS) with FastAPI. Click the thumbnail to preview the report.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn" href="assets/reports/EIMvaluationreport.pdf" download>Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="col-6 reveal">
+          <div class="project card">
+            <div class="thumb" data-pdf="assets\reports\Jubilant Foodwork_watermark.pdf" role="button" tabindex="0" aria-label="Open PDF: N-Queens Visual Solver">
+              <img src="assets\images\Jubliant_report.jpg" alt="Jubilant Foodworks Report thumbnail" loading="lazy">
+              <span class="label">PDF · 24 pages</span>
+            </div>
+            <h3>Jubilant Foodworks Report</h3>
+            <p>Backtracking visualizer (Python/Pygame). Report includes architecture & complexity analysis.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn" href="assets\reports\Jubilant Foodwork_watermark.pdf" download>Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="col-6 reveal">
+          <div class="project card">
+            <div class="thumb" data-pdf="assets\reports\MonolithischIndia.pdf" role="button" tabindex="0" aria-label="Open PDF: N-Queens Visual Solver">
+              <img src="assets\images\monolithisch_report.jpg" alt="Monolithisch India Report thumbnail" loading="lazy">
+              <span class="label">PDF · 11 pages</span>
+            </div>
+            <h3>Monolithisch India Report</h3>
+            <p>Backtracking visualizer (Python/Pygame). Report includes architecture & complexity analysis.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn" href="assets\reports\MonolithischIndia.pdf" download>Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 4 -->
+        <div class="col-6 reveal">
+          <div class="project card">
+            <div class="thumb" data-file="assets\financial_model\Eicher Motors Model final version.xlsx" role="button" tabindex="0" aria-label="Open File Preview">
+              <img src="assets\images\eicher_fin_model.jpg" alt="Eicher Motors Financial Model thumbnail" loading="lazy">
+              <span class="label">MS Excel</span>
+            </div>
+            <h3>Eicher Motors Financial Model</h3>
+            <p>Backtracking visualizer (Python/Pygame). Report includes architecture & complexity analysis.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn" href="assets\financial_model\Eicher Motors Model final version.xlsx" download>Download Excel File</a>
+          </div>
+        </div>
+      </div>
+
+    <!-- Full-width callout -->
+        <div class="col-12 reveal">
+          <div class="card resume-card">
+            <div class="resume-text">
+              <h3>Want the full resume?</h3>
+              <p class="muted">Download my resume or view my full portfolio.</p>
+            </div>
+
+            <div class="resume-actions">
+              <a class="btn primary resume-btn" href="assets/resume.pdf" download>
+                Download Resume
+              </a>
+
+              <a
+                class="btn resume-btn portfolio-btn"
+                href="https://drive.google.com/drive/folders/17idEqy8zGBZbvV0wVQk9evuKjxcS04VQ?usp=sharing"
+                target="_blank"
+                rel="noopener"
+              >
+                📄 Portfolio
+              </a>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title">Contact</h2>
+      <div class="card reveal" style="display:grid; gap:14px;">
+        <p class="muted">Prefer email? I usually respond within 24–48 hours.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+
+          <a class="btn" href="mailto:sahilggupta124@gmail.com">✉️ Email</a>
+          <a class="btn" href="https://www.youtube.com/@sahilgupta4406" target="_blank" rel="noopener">▶️ Youtube</a>
+          <a class="btn" href="https://www.linkedin.com/in/sahil-gupta-88992522a/" target="_blank" rel="noopener">💼 LinkedIn</a>
+          <a class="btn" href="https://x.com/sahilggupta134" target="_blank" rel="noopener">🐦 X</a>
+          
+          <!-- Calendly Button -->
+          <a class="btn calendly-btn" 
+            href="https://calendly.com/your-username" 
+            target="_blank" 
+            rel="noopener">
+            📅 Schedule a Call
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-grid">
+      <div>© <span id="y"></span> Sahil Gupta.</div>
+      <div style="justify-self:end;">Theme: <span id="themeLabel">Auto</span></div>
+    </div>
+  </footer>
+
+  <!-- PDF MODAL -->
+  <div class="modal" id="pdfModal" aria-hidden="true" aria-labelledby="pdfTitle" role="dialog">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong id="pdfTitle">Document</strong>
+        <div style="display:flex; gap:10px;">
+          <a id="pdfDownload" class="btn" href="#" download>Download</a>
+          <button class="icon-btn" id="modalClose" aria-label="Close preview">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <!-- Fallback to embed/object if iframe blocked -->
+        <iframe id="pdfFrame" title="PDF preview"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- THEME ----------
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+
+    function applyTheme(mode) {
+      if (mode === 'light' || mode === 'dark') {
+        root.setAttribute('data-theme', mode);
+        localStorage.setItem('theme', mode);
+        themeIcon.textContent = mode === 'dark' ? '🌞' : '🌙';
+        themeLabel.textContent = mode[0].toUpperCase() + mode.slice(1);
+      } else {
+        root.setAttribute('data-theme', prefersDark ? 'dark' : '');
+        localStorage.removeItem('theme');
+        themeIcon.textContent = prefersDark ? '🌞' : '🌙';
+        themeLabel.textContent = 'Auto';
+      }
+    }
+
+    // init theme
+    const saved = localStorage.getItem('theme'); // 'dark' | 'light' | null
+    applyTheme(saved || 'auto');
+
+    // toggle order: auto -> dark -> light -> auto
+    let idx = 0;
+    themeToggle.addEventListener('click', () => {
+      const modes = ['auto','dark','light'];
+      idx = (idx + 1) % modes.length;
+      applyTheme(modes[idx]);
+    });
+
+    // ---------- SCROLL PROGRESS + ACTIVE LINKS ----------
+    const progress = document.getElementById('progress');
+    const navLinks = [...document.querySelectorAll('.nav-links a[href^="#"]')];
+    function onScroll() {
+      const h = document.documentElement;
+      const dh = h.scrollHeight - h.clientHeight;
+      progress.style.width = (100 * h.scrollTop / dh) + '%';
+
+      let currentId = '';
+      for (const sec of document.querySelectorAll('section, header')) {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= 90 && rect.bottom >= 120) currentId = sec.id;
+      }
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + currentId));
+    }
+    document.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // ---------- INTERSECTION REVEAL ----------
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ---------- HERO PARALLAX ----------
+    const heroBg = document.querySelector('.hero-bg');
+    document.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      heroBg.style.setProperty('--parallax', (y * 0.06) + 'px');
+    }, { passive: true });
+
+    // ---------- VIDEO CONTROLS ----------
+    const vid = document.getElementById('aboutVideo');
+    const playToggle = document.getElementById('playToggle');
+    const muteToggle = document.getElementById('muteToggle');
+    playToggle.addEventListener('click', () => vid.paused ? vid.play() : vid.pause());
+    muteToggle.addEventListener('click', () => vid.muted = !vid.muted);
+
+    // ---------- PDF MODAL ----------
+    const pdfModal = document.getElementById('pdfModal');
+    const pdfFrame = document.getElementById('pdfFrame');
+    const pdfTitle = document.getElementById('pdfTitle');
+    const pdfDownload = document.getElementById('pdfDownload');
+    const modalClose = document.getElementById('modalClose');
+
+    function openPDF(src, title = 'Document') {
+      pdfTitle.textContent = title;
+      pdfFrame.src = src;
+      pdfDownload.href = src;
+      pdfModal.classList.add('open');
+      pdfModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closePDF() {
+      pdfModal.classList.remove('open');
+      pdfModal.setAttribute('aria-hidden', 'true');
+      pdfFrame.src = 'about:blank';
+      document.body.style.overflow = '';
+    }
+    modalClose.addEventListener('click', closePDF);
+    pdfModal.addEventListener('click', (e) => { if (e.target === pdfModal) closePDF(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePDF(); });
+
+    // click handlers for all PDF thumbnails
+    document.querySelectorAll('.thumb').forEach(card => {
+      card.addEventListener('click', () => {
+        const pdf = card.dataset.pdf;
+        const file = card.dataset.file;
+
+        // PDF preview
+        if (pdf) {
+          openPDF(
+            pdf,
+            card.parentElement.querySelector('h3')?.textContent || 'Document'
+          );
+          return;
+        }
+
+        // Non-previewable files (Excel)
+        if (file) {
+          const ext = file.split('.').pop().toLowerCase();
+          if (ext === 'xlsx' || ext === 'xls') {
+            alert('Preview not available');
+          }
+        }
+      });
+
+      // Keyboard accessibility
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.click();
+        }
+      });
+    });
+
+
+    // ---------- MISC ----------
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
